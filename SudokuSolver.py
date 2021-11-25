@@ -1,6 +1,6 @@
 import sys
 import math
-
+import random
 
 # Função que recebe um array das linhas e cria um tabuleiro com os valores
 def criar_tabuleiro(lines):
@@ -60,46 +60,53 @@ def solucionarLin(tabuleiro, linhaInd):         # Função para solucionar uma l
             indicesZeradosLin.append(i)
         if(linha.count(str(i+1)) == 0):
             numerosFaltantesLin.append(i+1)
-
     # Pegando as colunas ao qual o indice da linha é zero
     colunas = pegarColunas(tabuleiro, indicesZeradosLin)
     # Pegando o indice da coluna com menos zeros
     colMinZeros = pegarColMinZero(colunas)
     indicesZeradosCol = []
     numerosFaltantesCol = []
+    if len(colunas) == 0:
+        print
     for i in range(9):
         if(colunas[colMinZeros][1][i] == '0'):
             indicesZeradosCol.append(i)
         if(colunas[colMinZeros][1].count(str(i+1)) == 0):
             numerosFaltantesCol.append(i+1)
     # Pegando os números faltantes em comum da linha e da coluna
-    faltantesIguaisLinCol = pegarItrLinCol(
+    faltantesIguaisLinCol = pegarItr(
         numerosFaltantesLin, numerosFaltantesCol)
     # Verificando se existe apenas um número faltante em comum
     if len(faltantesIguaisLinCol) == 1:
-        tabuleiro[linhaInd][colunas[colMinZeros]
-            [0][0]] = str(faltantesIguaisLinCol[0])
+        tabuleiro[linhaInd][colunas[colMinZeros][0][0]] = str(faltantesIguaisLinCol[0])
         # Aqui retorno para a função principal para que funcione de forma recursiva
         solucionarTabuleiro(tabuleiro)
     else:
         quadrado = pegarQuadrado(linhaInd, colunas[colMinZeros][0][0])
         indicesZeradosQua = []
         for i in range(3):
-            linhaInd = []
+            linhaIndices = []
             for j in range(3):
                 if quadrado[i][j] == '0':
-                    linhaInd.append(j)
-            indicesZeradosQua.append(linhaInd)
-        numFaltAux = []
+                    linhaIndices.append(j)
+            indicesZeradosQua.append(linhaIndices)
         numerosFaltantesQua = []
         for k in range(9):
             if (quadrado[0].count(str(k+1)) == 0
             and quadrado[1].count(str(k+1)) == 0
             and quadrado[2].count(str(k+1)) == 0
-            and numFaltAux.count(str(k+1)) == 0):
-                numFaltAux.append(k+1);
+            and numerosFaltantesQua.count(str(k+1)) == 0):
+                numerosFaltantesQua.append(k+1);
                 continue
-        numerosFaltantesQua.append(numFaltAux)
+
+        faltantesIguaisLinColQua = pegarItr(faltantesIguaisLinCol, numerosFaltantesQua)
+        if len(faltantesIguaisLinColQua) == 1:
+            tabuleiro[linhaInd][colunas[colMinZeros][0][0]] = str(faltantesIguaisLinColQua[0])
+        else:
+            print(random.choice(faltantesIguaisLinColQua))
+            tabuleiro[linhaInd][colunas[colMinZeros][0][0]] = str(random.choice(faltantesIguaisLinColQua))
+            solucionarTabuleiro(tabuleiro)
+
 
 def pegarQuadrado(indLin, indCol):
     quadrado = []
@@ -178,7 +185,7 @@ def pegarQuadrado(indLin, indCol):
     else:
         print("Não foi possivel definir quadrado >lina<")
         
-def pegarItrLinCol(lin, col):
+def pegarItr(lin, col):
     itr = []
     if len(lin) > len(col):
         for vlr in col:
@@ -248,3 +255,4 @@ lines = [                                       # Linhas usadas para testes
 
 tabuleiro = criar_tabuleiro(lines)
 solucionarTabuleiro(tabuleiro)
+print(tabuleiro)
