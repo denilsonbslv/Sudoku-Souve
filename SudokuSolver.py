@@ -1,7 +1,9 @@
 import sys
 import math
 
-def criar_tabuleiro(lines):                     # Função que recebe um array das linhas e cria um tabuleiro com os valores
+
+# Função que recebe um array das linhas e cria um tabuleiro com os valores
+def criar_tabuleiro(lines):
     tabuleiro = [                               # Criando a tabuleiro (matriz)
         ["", "", "", "", "", "", "", "", ""],
         ["", "", "", "", "", "", "", "", ""],
@@ -13,19 +15,25 @@ def criar_tabuleiro(lines):                     # Função que recebe um array d
         ["", "", "", "", "", "", "", "", ""],
         ["", "", "", "", "", "", "", "", ""]
     ]
-    for i in range(9):                          # Pegando os valores das linhas e adiconando ao tabuleiro
+    # Pegando os valores das linhas e adiconando ao tabuleiro
+    for i in range(9):
         j = 0
         for num in lines[i]:
             tabuleiro[i][j] = num
             j += 1
-    return(tabuleiro)                           # Aqui retorno o tabuleiro para ser resolvido
+    # Aqui retorno o tabuleiro para ser resolvido
+    return(tabuleiro)
 
-def solucionarZero(tabuleiro, i, j):            # Função que retorna o número corresponde a cordenada recebida
+
+# Função que retorna o número corresponde a cordenada recebida
+def solucionarZero(tabuleiro, i, j):
     return 0;
 
-def selecionarLinCol(tabuleiro):                # Função para pegar a linha ou a coluna para iniciar
-    qtdZeroLin = [0,0,0,0,0,0,0,0,0]
-    qtdZeroCol = [0,0,0,0,0,0,0,0,0]
+
+# Função para pegar a linha ou a coluna para iniciar
+def selecionarLinCol(tabuleiro):
+    qtdZeroLin = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    qtdZeroCol = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     for i in range(9):
         for j in range(9):
             if(tabuleiro[i][j] == "0"):
@@ -37,21 +45,26 @@ def selecionarLinCol(tabuleiro):                # Função para pegar a linha ou
         [qtdZeroCol.index(min(qtdZeroCol)), min(qtdZeroCol)]]
     return linCol
 
+
 def solucionarCol(tabuleiro, coluna):
     print()
+
 
 def solucionarLin(tabuleiro, linhaInd):         # Função para solucionar uma linha
     indicesZeradosLin = []
     numerosFaltantesLin = []
     linha = tabuleiro[linhaInd]                 # Pegando a linha
-    for i in range(9):                          # For para pegar os numeros que faltam e os indices para usar posteriormente
+    # For para pegar os numeros que faltam e os indices para usar posteriormente
+    for i in range(9):
         if(linha[i] == '0'):
             indicesZeradosLin.append(i)
         if(linha.count(str(i+1)) == 0):
             numerosFaltantesLin.append(i+1)
-    
-    colunas = pegarColunas(tabuleiro, indicesZeradosLin) # Pegando as colunas ao qual o indice da linha é zero
-    colMinZeros = pegarColMinZero(colunas)               # Pegando o indice da coluna com menos zeros
+
+    # Pegando as colunas ao qual o indice da linha é zero
+    colunas = pegarColunas(tabuleiro, indicesZeradosLin)
+    # Pegando o indice da coluna com menos zeros
+    colMinZeros = pegarColMinZero(colunas)
     indicesZeradosCol = []
     numerosFaltantesCol = []
     for i in range(9):
@@ -59,15 +72,34 @@ def solucionarLin(tabuleiro, linhaInd):         # Função para solucionar uma l
             indicesZeradosCol.append(i)
         if(colunas[colMinZeros][1].count(str(i+1)) == 0):
             numerosFaltantesCol.append(i+1)
-    faltantesIguaisLinCol = pegarItrLinCol(numerosFaltantesLin, numerosFaltantesCol) # Pegando os números faltantes em comum da linha e da coluna
-    if len(faltantesIguaisLinCol) == 1:                 # Verificando se existe apenas um número faltante em comum
-        tabuleiro[linhaInd][colunas[colMinZeros][0][0]] = str(faltantesIguaisLinCol[0])
-        solucionarTabuleiro(tabuleiro)                   # Aqui retorno para a função principal para que funcione de forma recursiva
+    # Pegando os números faltantes em comum da linha e da coluna
+    faltantesIguaisLinCol = pegarItrLinCol(
+        numerosFaltantesLin, numerosFaltantesCol)
+    # Verificando se existe apenas um número faltante em comum
+    if len(faltantesIguaisLinCol) == 1:
+        tabuleiro[linhaInd][colunas[colMinZeros]
+            [0][0]] = str(faltantesIguaisLinCol[0])
+        # Aqui retorno para a função principal para que funcione de forma recursiva
+        solucionarTabuleiro(tabuleiro)
     else:
         quadrado = pegarQuadrado(linhaInd, colunas[colMinZeros][0][0])
-        numerosFaltantesQua = pegarFaltantesQua(quadrado);
-
-    print(linhaInd, colunas[colMinZeros][0][0])
+        indicesZeradosQua = []
+        for i in range(3):
+            linhaInd = []
+            for j in range(3):
+                if quadrado[i][j] == '0':
+                    linhaInd.append(j)
+            indicesZeradosQua.append(linhaInd)
+        numFaltAux = []
+        numerosFaltantesQua = []
+        for k in range(9):
+            if (quadrado[0].count(str(k+1)) == 0
+            and quadrado[1].count(str(k+1)) == 0
+            and quadrado[2].count(str(k+1)) == 0
+            and numFaltAux.count(str(k+1)) == 0):
+                numFaltAux.append(k+1);
+                continue
+        numerosFaltantesQua.append(numFaltAux)
 
 def pegarQuadrado(indLin, indCol):
     quadrado = []
