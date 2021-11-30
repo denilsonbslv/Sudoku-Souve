@@ -187,36 +187,42 @@ def pegarvaloresFaltantes(linha, coluna, quadrado):
                             continue
     return vlrComuns
 
-
 # Pegar quantas vezes o valor se repete no tabuleiro
-def pegarRecorrenciaTab(colunas, valoresFaltantes):
-    recorrencia = []
-
+def pegarValorCorreto(tabuleiro, colunas, valoresFaltantes):
+    recorrenciaColunas = []
     for i in range(len(valoresFaltantes)):
         cont = 0
         for j in range(len(colunas)):
             if colunas[j][1].count(str(valoresFaltantes[i])) == 1:
                 cont+=1
-        recorrencia.append([valoresFaltantes[i], cont])
+        recorrenciaColunas.append(cont)
 
-    menosReco = 0
-    menor = 9
-    for vlrRec in recorrencia:
-        if vlrRec[1] < menor:
-            menor = vlrRec[1]
-            menosReco = vlrRec[0]
+    recorrenciaTabuleiro = []
+    for vlr in valoresFaltantes:
+        contadorRec = 0
+        for i in range(9):
+            if tabuleiro[i].count(str(vlr)) == 1:
+                contadorRec+=1
+        recorrenciaTabuleiro.append(contadorRec)
+    
+    maiorRecCol = max(recorrenciaColunas)
+    menorRecTab = min(recorrenciaTabuleiro)
 
-    return menosReco
+    colMaior = 0
+    tabMaior = 0
 
-        
-    # for vlr in valoresFaltantes:
-    #     contadorRec = 0
-    #     for i in range(9):
-    #         if tabuleiro[i].count(str(vlr)) == 1:
-    #             contadorRec+=1
-
-    #     recorrencia.append(contadorRec)
-    # return recorrencia
+    for i in range(len(valoresFaltantes)):
+        if(recorrenciaColunas[i] > recorrenciaTabuleiro[i]):
+            colMaior += 1
+        if(recorrenciaColunas[i] < recorrenciaTabuleiro[i]):
+            tabMaior += 1
+            
+    if colMaior > tabMaior:
+        return valoresFaltantes[recorrenciaColunas.index(maiorRecCol)] 
+    elif tabMaior > colMaior:
+        return valoresFaltantes[recorrenciaTabuleiro.index(menorRecTab)] 
+    else:
+        return valoresFaltantes[0] 
 
 # Função para solucionar uma linha
 def solucionarLin(tabuleiro, indiceLinha):
@@ -264,39 +270,10 @@ def solucionarLin(tabuleiro, indiceLinha):
         tabuleiro[indiceLinha][indiceColuna] = str(valoresComunsFaltantes[0])
     else:
 
-        VlrMenosRecorre = pegarRecorrenciaTab(colunas, valoresComunsFaltantes)
+        VlrMenosRecorre = pegarValorCorreto(tabuleiro, colunas, valoresComunsFaltantes)
         
-        tabuleiro[indiceLinha][indiceColuna] = str(pegarRecorrenciaTab(colunas, valoresComunsFaltantes))
+        tabuleiro[indiceLinha][indiceColuna] = str(VlrMenosRecorre)
 
-        # for vlr in valoresComunsFaltantes:
-        #     if indiceLinha > 0 and indiceLinha < 8:
-        #         linhaSup = tabuleiro[indiceLinha - 1]
-        #         linhaSupBool = False
-        #         linhaInf = tabuleiro[indiceLinha + 1]
-        #         linhaInfBool = False
-
-        #         if linhaSup.count(str(vlr)) == 1:
-        #             linhaSupBool = True
-        #         if linhaInf.count(str(vlr)) == 1:
-        #             linhaInfBool = True
-                
-        #         if linhaInfBool == True and linhaSupBool == True:
-        #             tabuleiro[indiceLinha][indiceColuna] = str(vlr)
-        #             continue
-
-        #     elif indiceLinha == 0:
-        #         linhaInf = tabuleiro[indiceLinha + 1]
-        #         if linhaInf.count(str(vlr)) == 1:
-        #             tabuleiro[indiceLinha][indiceColuna] = str(vlr)
-        #             continue
-
-        #     elif indiceLinha == 8:
-        #         linhaSup = tabuleiro[indiceLinha - 1]
-        #         if linhaSup.count(str(vlr)) == 1:
-        #             tabuleiro[indiceLinha][indiceColuna] = str(vlr)
-        #             continue
-
-        # tabuleiro[indiceLinha][indiceColuna] = str(valoresComunsFaltantes[0])
     return tabuleiro
     
 
