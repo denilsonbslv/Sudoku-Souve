@@ -1,3 +1,5 @@
+pontoRestauracao = []
+
 # Função para criar o tabuleiro com as linhas
 def criarTabuleiro(linhas):
     tabuleiro = [                               # Criando a tabuleiro (matriz)
@@ -223,8 +225,8 @@ def pegarValorCorreto(tabuleiro, colunas, valoresFaltantes):
         return valoresFaltantes[recorrenciaTabuleiro.index(menorRecTab)] 
     else:
         return valoresFaltantes[0] 
+    
 
-# Função para solucionar uma linha
 def solucionarLin(tabuleiro, indiceLinha):
     indiceLinha = int(indiceLinha[0])
     indicesZeradosLin = []
@@ -268,35 +270,47 @@ def solucionarLin(tabuleiro, indiceLinha):
 
     if len(valoresComunsFaltantes) == 1:
         tabuleiro[indiceLinha][indiceColuna] = str(valoresComunsFaltantes[0])
-    else:
+        return resolverSudoku(tabuleiro)
+    elif len(valoresComunsFaltantes) > 1:
+        valoresBackup = []
+        for i in range(len(valoresComunsFaltantes) - 1):
+            valoresBackup.append(valoresComunsFaltantes[i+1])
 
-        VlrMenosRecorre = pegarValorCorreto(tabuleiro, colunas, valoresComunsFaltantes)
+        pontoRestauracao.clear()
+        pontoRestauracao.append([valoresBackup, indiceLinha, indiceColuna])
+        tabuleiro[indiceLinha][indiceColuna] = str(valoresComunsFaltantes[0])
+        return resolverSudoku(tabuleiro)
+    else:
+        indLinha = pontoRestauracao[0][1]
+        indColuna = pontoRestauracao[0][2]
+
+        if len(pontoRestauracao[0][0]) == 1:
+            tabuleiro[indLinha][indColuna] = str(pontoRestauracao[0][0][0])
+            pontoRestauracao.clear()
+
+        else:
+            valoresBackup = []
+            for i in range(len(pontoRestauracao[0][1]) - 1):
+                valoresBackup.append(pontoRestauracao[0][1][i+1])
+
+            tabuleiro[indLinha][indColuna] = str(pontoRestauracao[0][1][0]) 
+            pontoRestauracao.clear()
+            pontoRestauracao.append([tabuleiro, valoresBackup, indLinha, indColuna])
+            
+        return resolverSudoku(tabuleiro)
+
         
-        tabuleiro[indiceLinha][indiceColuna] = str(VlrMenosRecorre)
-
-    return tabuleiro
-    
-
-# Função para solucionar uma coluna
-def solucionarCol(tabuleiro, colMenosZero):
-    print()
 
 
-def resolverSudoku(tabuleiro):                                          # Função para solucionar sudoku
+def resolverSudoku(tabuleiro):
     linMenosZero = selecionarLin(tabuleiro)
-    colMenosZero = selecionarCol(tabuleiro)
 
-    if linMenosZero[1] > colMenosZero[1]:
-        tabuleiro = solucionarLin(tabuleiro, linMenosZero)
-    elif colMenosZero[1] > linMenosZero[1]:
-        tabuleiro = solucionarCol(tabuleiro, colMenosZero)
-    else:
-        tabuleiro = solucionarLin(tabuleiro, linMenosZero)
-
-    if len(linMenosZero) == 1 and len(colMenosZero) == 1:
+    if linMenosZero == 0:
         return tabuleiro
+    else:
+        solucionarLin(tabuleiro, linMenosZero)
 
-    return resolverSudoku(tabuleiro)
+    
 
 linhas = ["120070560","507932080","000001000","010240050","308000402","070085010","000700000","080423701","034010028"]
 
